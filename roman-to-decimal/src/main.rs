@@ -12,14 +12,10 @@ fn convert(s: String) -> i32 {
             'M' => 1000,
             _ => -1,
         };
-        if prev_value == -1 {
-            res += value;
+        if prev_value > value {
+            res = res - value;
         } else {
-            if prev_value > value {
-                res = res - value;
-            } else {
-                res = res + value;
-            }
+            res = res + value;
         }
         prev_value = value;
     }
