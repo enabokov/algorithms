@@ -1,66 +1,62 @@
-use std::collections::HashMap;
-
-fn convert(x: String) -> i32 {
-    let mut symbols: HashMap<String, i32> = HashMap::new();
-    symbols.insert("I".to_string(), 1);
-    symbols.insert("V".to_string(), 5);
-    symbols.insert("X".to_string(), 10);
-    symbols.insert("L".to_string(), 50);
-    symbols.insert("C".to_string(), 100);
-    symbols.insert("D".to_string(), 500);
-    symbols.insert("M".to_string(), 1000);
-
+fn convert(s: String) -> i32 {
     let mut res = 0;
     let mut prev_value = -1;
-    for c in x.chars() {
-        // println!("{}", c);
-        match symbols.get(&c.to_string()) {
-            Some(value) => {
-                if prev_value == -1 {
-                    prev_value = *value;
-                    res += value;
-                } else {
-                    if prev_value >= *value {
-                        res += value;
-                    } else {
-                        res = value - res;
-                    }
-                }
-            },
-            None => println!("{} was not found", x)
+    for c in s.chars().rev() {
+        let value = match c {
+            'I' => 1,
+            'V' => 5,
+            'X' => 10,
+            'L' => 50,
+            'C' => 100,
+            'D' => 500,
+            'M' => 1000,
+            _ => -1,
+        };
+        if prev_value == -1 {
+            res += value;
+        } else {
+            if prev_value > value {
+                res = res - value;
+            } else {
+                res = res + value;
+            }
         }
+        prev_value = value;
     }
 
     res
 }
 
 fn main() {
-    println!("Result: {}", convert("IX".to_string()))
+    println!("Result: {}", convert("CLIV".to_string()))
 }
-
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_check_convert_9() {
-        assert_eq!(convert("IX".to_string()), 9);
+    macro_rules! test_convert {
+        ($($name:ident: $value:expr,)*) => {
+            $(
+                #[test]
+                fn $name() {
+                    let (roman, decimal) = $value;
+                    assert_eq!(decimal, convert(roman.to_string()));
+                }
+            )*
+        };
     }
 
-    #[test]
-    fn test_check_convert_3() {
-        assert_eq!(convert("III".to_string()), 3);
-    }
-
-    #[test]
-    fn test_check_convert_6() {
-        assert_eq!(convert("VI".to_string()), 6);
-    }
-
-    #[test]
-    fn test_check_convert_4() {
-        assert_eq!(convert("IV".to_string()), 4);
+    test_convert! {
+        check_1: ("I", 1),
+        check_3: ("III", 3),
+        check_4: ("IV", 4),
+        check_6: ("VI", 6),
+        check_9: ("IX", 9),
+        check_57: ("LVII", 57),
+        check_89: ("LXXXIX", 89),
+        check_99: ("XCIX", 99),
+        check_154: ("CLIV", 154),
+        check_1994: ("MCMXCIV", 1994),
     }
 }
