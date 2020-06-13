@@ -1,6 +1,6 @@
 fn convert(s: String) -> i32 {
     let mut res = 0;
-    let mut prev_value = -1;
+    let mut prev_value: i32 = -1;
     for c in s.chars().rev() {
         let value = match c {
             'I' => 1,
