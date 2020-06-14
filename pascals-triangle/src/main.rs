@@ -1,13 +1,13 @@
 fn compare(triangle1: Vec<Vec<i32>>, triangle2: Vec<Vec<i32>>) -> bool {
     let mut res = true;
     if triangle1.is_empty() && triangle2.is_empty() {
-        return res
+        return res;
     }
     if triangle1.is_empty() && !triangle2.is_empty() {
-        return false
+        return false;
     }
     if !triangle1.is_empty() && triangle2.is_empty() {
-        return false
+        return false;
     }
 
     for it in triangle1.iter().zip(triangle2.iter()) {
@@ -20,16 +20,17 @@ fn compare(triangle1: Vec<Vec<i32>>, triangle2: Vec<Vec<i32>>) -> bool {
     res
 }
 
-fn generate_new_level(l: &Vec<i32>) -> Vec<i32> {
+fn generate_new_level(l: &Vec<i32>) -> Box<Vec<i32>> {
     println!("process {:?}", l);
     if l.len() == 1 {
-        return vec![1, 1];
+        return Box::new(vec![1, 1]);
     }
 
+    let mut res = Box::new(vec![]);
+
     let mut index = 0;
-    let mut res = vec![];
     let mut left = 0;
-    let mut right = l.get(index).unwrap();
+    let mut right = l.get(0).unwrap();
     for _ in 0..l.len() + 1 {
         println!("left: {}, right: {}, res: {}", left, right, left + right);
         res.push(left + right);
@@ -52,15 +53,14 @@ fn generate(num_rows: i32) -> Vec<Vec<i32>> {
     let mut res = Vec::<Vec<i32>>::default();
 
     if num_rows == 0 {
-        return res
+        return res;
     }
 
-    let root = vec![1];    
+    let root = vec![1];
     res.push(root);
 
     for _ in 0..num_rows - 1 {
-        let new_level = generate_new_level(&res.last().unwrap());
-        res.push(new_level);
+        res.push(generate_new_level(&res.last().unwrap()).as_ref().to_vec());
     }
 
     res
