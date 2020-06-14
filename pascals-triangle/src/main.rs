@@ -26,7 +26,7 @@ fn generate_new_level(l: &Vec<i32>) -> Box<Vec<i32>> {
         return Box::new(vec![1, 1]);
     }
 
-    let mut res = Box::new(vec![]);
+    let mut res = Box::new(Vec::<i32>::with_capacity(l.len() + 1));
 
     let mut index = 0;
     let mut left = 0;
@@ -50,7 +50,7 @@ fn generate_new_level(l: &Vec<i32>) -> Box<Vec<i32>> {
 }
 
 fn generate(num_rows: i32) -> Vec<Vec<i32>> {
-    let mut res = Vec::<Vec<i32>>::default();
+    let mut res = Vec::<Vec<i32>>::with_capacity(num_rows as usize + 1);
 
     if num_rows == 0 {
         return res;
