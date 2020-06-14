@@ -85,60 +85,24 @@ fn insert_node(l: &mut Option<Box<ListNode>>, data: &Box<ListNode>) {
 }
 
 fn merge_two_lists(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let mut root: Option<Box<ListNode>> = Option::default();
-
-    let mut reflist1 = l1.as_ref();
-    let mut reflist2 = l2.as_ref();
-
-    loop {
-        if reflist1.is_none() {
-            println!("First list is empty. Append all values from second list");
-            match reflist2 {
-                Some(node) => {
-                    insert_node(&mut root, node);
-                }
-                _ => println!("Second list is empty as well. Break loop."),
-            }
-            break;
-        }
-
-        if reflist2.is_none() {
-            println!("Second list is empty. Append all values from first list");
-            match reflist1 {
-                Some(node) => {
-                    insert_node(&mut root, node);
-                }
-                _ => println!("First list is empty as well. Break loop."),
-            }
-            break;
-        }
-
-        let node1 = reflist1.unwrap();
-        let node2 = reflist2.unwrap();
-
-        println!("compare: {} - {}", node1.val, node2.val);
-        if node1.val > node2.val {
-            let new_node = Box::new(ListNode::new(node2.val));
-            if root.is_none() {
-                root = Option::from(new_node);
+    match (l1, l2) {
+        (None, None) => None,
+        (Some(node1), None) => Some(node1),
+        (None, Some(node2)) => Some(node2),
+        (Some(node1), Some(node2)) => {
+            if node1.val > node2.val {
+                Some(Box::new(ListNode {
+                    val: node2.val,
+                    next: merge_two_lists(Some(node1), node2.next),
+                }))
             } else {
-                insert_node(&mut root, &new_node);
+                Some(Box::new(ListNode {
+                    val: node1.val,
+                    next: merge_two_lists(node1.next, Some(node2)),
+                }))
             }
-            // move forward
-            reflist2 = node2.next.as_ref();
-        } else {
-            let new_node = Box::new(ListNode::new(node1.val));
-            if root.is_none() {
-                root = Option::from(new_node);
-            } else {
-                insert_node(&mut root, &new_node);
-            }
-            // move forward
-            reflist1 = node1.next.as_ref();
         }
     }
-
-    root
 }
 
 fn main() {
