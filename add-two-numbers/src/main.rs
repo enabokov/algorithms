@@ -33,7 +33,11 @@ fn insert_node(l: &mut Option<Box<ListNode>>, data: &Box<ListNode>) {
     tmp.get_or_insert(data.clone());
 }
 
-fn add(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>, addup: i32) -> Option<Box<ListNode>> {
+fn add(
+    l1: &Option<Box<ListNode>>,
+    l2: &Option<Box<ListNode>>,
+    addup: i32,
+) -> Option<Box<ListNode>> {
     match (l1, l2) {
         (None, None) => {
             if addup == 0 {
@@ -41,55 +45,35 @@ fn add(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>, addup: i32) -> Opti
             }
             Some(Box::new(ListNode::new(addup)))
         }
-        (Some(node1), None) => {
-            println!("left to addup: {}", addup);
-            let num = node1.val + addup;
-            let remainder = num % 10;
-            println!(
-                "remainder: {}, val: {}, addup: {}",
-                remainder,
-                (num - remainder) / 10,
-                addup
-            );
-            Some(Box::new(ListNode {
-                val: remainder,
-                next: add(None, node1.next, (num - remainder) / 10),
-            }))
-        }
-        (None, Some(node2)) => {
-            println!("right to addup: {}", addup);
-            let num = node2.val + addup;
-            let remainder = num % 10;
-            println!(
-                "remainder: {}, val: {}, addup: {}",
-                remainder,
-                (num - remainder) / 10,
-                addup
-            );
-            Some(Box::new(ListNode {
-                val: remainder,
-                next: add(None, node2.next, (num - remainder) / 10),
-            }))
-        }
-        (Some(node1), Some(node2)) => {
-            let num = node1.val + node2.val + addup;
-            let remainder = num % 10;
-            println!(
-                "remainder: {}, val: {}, addup: {}",
-                remainder,
-                (num - remainder) / 10,
-                addup
-            );
-            Some(Box::new(ListNode {
-                val: remainder,
-                next: add(node1.next, node2.next, (num - remainder) / 10),
-            }))
-        }
+        (Some(node1), None) => Some(Box::new(ListNode {
+            val: (node1.val + addup) % 10,
+            next: add(
+                &None,
+                &node1.next,
+                (node1.val + addup - (node1.val + addup) % 10) / 10,
+            ),
+        })),
+        (None, Some(node2)) => Some(Box::new(ListNode {
+            val: (node2.val + addup) % 10,
+            next: add(
+                &None,
+                &node2.next,
+                (node2.val + addup - (node2.val + addup) % 10) / 10,
+            ),
+        })),
+        (Some(node1), Some(node2)) => Some(Box::new(ListNode {
+            val: (node1.val + node2.val + addup) % 10,
+            next: add(
+                &node1.next,
+                &node2.next,
+                (node1.val + node2.val + addup - (node1.val + node2.val + addup) % 10) / 10,
+            ),
+        })),
     }
 }
 
 fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    add(l1, l2, 0)
+    add(&l1, &l2, 0)
 }
 
 fn main() {
