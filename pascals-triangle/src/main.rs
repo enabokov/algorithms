@@ -1,5 +1,14 @@
 fn compare(triangle1: Vec<Vec<i32>>, triangle2: Vec<Vec<i32>>) -> bool {
     let mut res = true;
+    if triangle1.is_empty() && triangle2.is_empty() {
+        return res
+    }
+    if triangle1.is_empty() && !triangle2.is_empty() {
+        return false
+    }
+    if !triangle1.is_empty() && triangle2.is_empty() {
+        return false
+    }
 
     for it in triangle1.iter().zip(triangle2.iter()) {
         let (ait, bit) = it;
@@ -42,7 +51,11 @@ fn generate_new_level(l: &Vec<i32>) -> Vec<i32> {
 fn generate(num_rows: i32) -> Vec<Vec<i32>> {
     let mut res = Vec::<Vec<i32>>::default();
 
-    let root = vec![1];
+    if num_rows == 0 {
+        return res
+    }
+
+    let root = vec![1];    
     res.push(root);
 
     for _ in 0..num_rows - 1 {
@@ -68,6 +81,7 @@ mod tests {
                 fn $name() {
                     let (num, expected) = $value;
                     let triangle = generate(num);
+                    println!("Actual {:?}", triangle);
                     assert!(compare(triangle, expected), true);
                 }
             )*
@@ -75,6 +89,9 @@ mod tests {
     }
 
     test_convert! {
-        check_1: (3, vec![vec![1], vec![1, 1], vec![1, 2, 1]]),
+        check_0: (0, vec![]),
+        check_1: (1, vec![vec![1]]),
+        check_2: (2, vec![vec![1], vec![1, 1]]),
+        check_3: (3, vec![vec![1], vec![1, 1], vec![1, 2, 1]]),
     }
 }
