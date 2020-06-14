@@ -1,22 +1,24 @@
 fn is_valid(s: String) -> bool {
     let mut res = true;
 
-    let mut opened_parentheses = Vec::<char>::default();
+    let mut opened_brackets = Vec::<char>::default();
     for c in s.trim().chars() {
         if c == '{' || c == '(' || c == '[' {
             println!("Push {}", c);
-            opened_parentheses.push(c);
+            opened_brackets.push(c);
         } else {
-            if let Some(prev) = opened_parentheses.pop() {
-                if prev == '{' && c != '}' {
-                    res = false;
-                    break;
-                }
-                if prev == '[' && c != ']' {
-                    res = false;
-                    break;
-                }
-                if prev == '(' && c != ')' {
+            if let Some(opened_bracket) = opened_brackets.pop() {
+                let expected_closed_bracket = match opened_bracket {
+                    '{' => '}',
+                    '[' => ']',
+                    '(' => ')',
+                    _ => {
+                        println!("Bad bracket: {}", opened_bracket);
+                        break;
+                    }
+                };
+
+                if expected_closed_bracket != c {
                     res = false;
                     break;
                 }
@@ -27,7 +29,7 @@ fn is_valid(s: String) -> bool {
         }
     }
 
-    if !opened_parentheses.is_empty() {
+    if !opened_brackets.is_empty() {
         res = false;
     }
 
@@ -49,8 +51,8 @@ mod tests {
             $(
                 #[test]
                 fn $name() {
-                    let (parentheses, expected) = $value;
-                    assert_eq!(expected, is_valid(parentheses.to_string()));
+                    let (brackets, expected) = $value;
+                    assert_eq!(expected, is_valid(brackets.to_string()));
                 }
             )*
         };
